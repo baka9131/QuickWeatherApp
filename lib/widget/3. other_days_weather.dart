@@ -13,7 +13,9 @@ class OtherDaysWeather extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return customedBox(_child(context));
+    return customedBox(
+      _child(context),
+    );
   }
 
   Widget _child(context) {
@@ -34,7 +36,7 @@ class OtherDaysWeather extends StatelessWidget {
     }
 
     return SizedBox(
-      height: 210,
+      height: 215,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         shrinkWrap: true,
@@ -53,6 +55,9 @@ class OtherDaysWeather extends StatelessWidget {
     if (items[index].category == Category.PTY && items[index].fcstValue == '0') {
       // 맑음
       if (items[index - 1].fcstValue == '1') {
+        if (18 <= int.parse(items[index - 1].fcstTime.toString().substring(0, 2)) || int.parse(items[index - 1].fcstTime.toString().substring(0, 2)) <= 7) {
+          return renderContainer(items[index - 2], items[index - 1], lottieNight, items[index + 1], items[index + 2]); // tmp, sky
+        }
         return renderContainer(items[index - 2], items[index - 1], lottieSunny, items[index + 1], items[index + 2]); // tmp, sky
       }
       // 구름 많음
@@ -82,17 +87,28 @@ class OtherDaysWeather extends StatelessWidget {
   }
 }
 
-Widget renderContainer(tmpItem, dataAndTimeItem, weatherLottie, pop, pcp) {
-  return Column(
-    children: [
-      Text('${tmpItem.fcstValue}°C', style: boldText),
-      weatherLottie,
-      Text('${dataAndTimeItem.fcstDate.substring(4, 6)}/${dataAndTimeItem.fcstDate.substring(6)}'),
-      const SizedBox(height: 6.0),
-      Text('${dataAndTimeItem.fcstTime.substring(0, 2)}시'),
-      const SizedBox(height: 6.0),
-      pop.fcstValue != '0' ? Text('강수확률 ${pop.fcstValue}%') : const Text(''),
-      pcp.fcstValue != '강수없음' ? Text('강수량 ${pcp.fcstValue}') : const Text(''),
-    ],
+Widget renderContainer(Item tmpItem, Item dataAndTimeItem, weatherLottie, Item pop, Item pcp) {
+  return Container(
+    decoration: dataAndTimeItem.fcstTime.substring(0, 2) == '00'
+        ? BoxDecoration(
+            borderRadius: BorderRadius.circular(8.0),
+            border: Border.all(
+              color: Colors.black,
+              width: 3.0,
+            ),
+          )
+        : null,
+    child: Column(
+      children: [
+        Text('${tmpItem.fcstValue}°C', style: boldText),
+        const SizedBox(height: 6.0),
+        Text('${dataAndTimeItem.fcstTime.substring(0, 2)}시'),
+        weatherLottie,
+        Text('${dataAndTimeItem.fcstDate.substring(4, 6)}/${dataAndTimeItem.fcstDate.substring(6)}'),
+        const SizedBox(height: 6.0),
+        pop.fcstValue != '0' ? Text('강수확률 ${pop.fcstValue}%') : const Text(''),
+        pcp.fcstValue != '강수없음' ? Text('강수량 ${pcp.fcstValue}') : const Text(''),
+      ],
+    ),
   );
 }

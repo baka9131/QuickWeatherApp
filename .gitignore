@@ -38,6 +38,8 @@ migrate_working_dir/
 /windows/
 pubspec.lock
 .metadata
+key.env
+/gogle_playstore_info
 
 # Symbolication related
 app.*.symbols

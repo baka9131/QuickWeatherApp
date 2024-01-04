@@ -16,10 +16,12 @@ class Weather extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return customedBox(child(context));
+    return customedBox(
+      _child(context),
+    );
   }
 
-  Widget child(context) {
+  Widget _child(context) {
     List<Item> weatherList = Provider.of<WeatherList>(context).weatherList;
     // 현재 시간에 해당하는 fcstTime 포맷 가져오기
     String currentDate = DateFormat('yyyyMMdd').format(DateTime.now());
@@ -31,10 +33,10 @@ class Weather extends StatelessWidget {
     Item? ptyItem = filteredItems.firstWhereOrNull((item) => item.category == Category.PTY);
     Item? skyItem = filteredItems.firstWhereOrNull((item) => item.category == Category.SKY);
 
-    log('${ptyItem?.fcstDate}');
-    log('${ptyItem?.fcstTime}');
-    log('${ptyItem?.fcstValue}');
-    log('${skyItem?.fcstValue}');
+    log('${ptyItem?.fcstDate}'); // ex) 20231217 (날짜)
+    log('${ptyItem?.fcstTime}'); // ex) 0600 (시간)
+    log('${ptyItem?.fcstValue}'); // ex) 0 (0: 없음, 1: 비, 2: 비/눈, 3: 눈, 4: 소나기)
+    log('${skyItem?.fcstValue}'); // ex) 1 (1: 맑음, 3: 구름 많음, 4: 흐림)
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -47,20 +49,24 @@ class Weather extends StatelessWidget {
                   borderRadius: BorderRadius.circular(8.0),
                   color: Colors.orange.shade100,
                 ),
-                child: const Padding(
-                  padding: EdgeInsets.only(left: 8.0, right: 8.0, top: 3.0, bottom: 3.0),
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 8.0, right: 8.0, top: 3.0, bottom: 3.0),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      // Image.asset('assets/imgs/logo_mark.png', width: 25, height: 25),
-                      // const SizedBox(width: 10),
-                      Text('기상청 제공'),
+                      Image.asset('assets/imgs/logo_mark.png', width: 25, height: 25),
+                      const SizedBox(width: 10),
+                      const Text('기상청 제공'),
                     ],
                   ),
                 ),
               ),
             const SizedBox(width: 8),
-            Text(filteredItems.isNotEmpty ? '기준시간 ${filteredItems[0].fcstDate} / ${filteredItems[0].fcstTime}' : ''),
+            Text(filteredItems.isNotEmpty
+                ? '${'${filteredItems[0].fcstDate.substring(4, 6)}월 ${filteredItems[0].fcstDate.substring(
+                      6,
+                    )}일'} / ${filteredItems[0].fcstTime.substring(0, 2)}시'
+                : ''),
           ],
         ),
         const SizedBox(height: 10),
